@@ -13,54 +13,50 @@ public class Main {
 
         File file = new File(args[0]);
         try {
-            Scanner scannerLine = new Scanner(file);
-            while (scannerLine.hasNextLine()) {
-                String line = scannerLine.nextLine();
-                Scanner scanner = new Scanner(line);
-                Driver driver = new Driver();
-                String type = scanner.next();
-                double wx = Double.parseDouble(scanner.next());
-                double wy = Double.parseDouble(scanner.next());
-                double wz = Double.parseDouble(scanner.next());
-                driver.setAxisAngle(wx, wy, wz);
-                double angle = Double.parseDouble(scanner.next());
-                driver.setAngle(angle);
-                double scale = Double.parseDouble(scanner.next());
-                driver.setScale(scale);
-                double tx = Double.parseDouble(scanner.next());
-                double ty = Double.parseDouble(scanner.next());
-                double tz = Double.parseDouble(scanner.next());
-                driver.translate(tx, ty, tz);
-                String modelName = scanner.next();
-                Path modelPath = Paths.get(args[0]);
-                //System.out.println(modelPath);
-                driver.setModel(modelName);
-
-                //System.out.println(driver.toString());
-                Model model = new Model(driver);
-                //assigns model number
-                int modelsBefore = 0;
-                for(int i = 0; i<driverArray.size(); i++) {
-                    if(driver.getModelName().equals(driverArray.get(i).getModelName())){
-                        modelsBefore++;
-                    }
+            Scanner scanner = new Scanner(file);
+            while (scanner.hasNext()) {
+                String word = scanner.next();
+                switch (word) {
+                    case "eye":
+                        double ex = scanner.nextDouble();
+                        double ey = scanner.nextDouble();
+                        double ez = scanner.nextDouble();
+                        String look = scanner.next();
+                        System.out.println(look);
+                        double lx =scanner.nextDouble();
+                        double ly =scanner.nextDouble();
+                        double lz =scanner.nextDouble() ;
+                        String up = scanner.next();
+                        System.out.println(up);
+                        double ux =scanner.nextDouble();
+                        double uy = scanner.nextDouble();
+                        double uz = scanner.nextDouble();
+                        String d = scanner.next();
+                        double dValue = scanner.nextDouble();
+                        String bounds = scanner.next();
+                        double bLeft  = scanner.nextDouble();
+                        double bRight  = scanner.nextDouble();
+                        double bBottum  = scanner.nextDouble();
+                        double bTop  = scanner.nextDouble();
+                        String res = scanner.next();
+                        int width = scanner.nextInt();
+                        int height = scanner.nextInt();
+                        break;
+                    case "ambient":
+                        double r = scanner.nextDouble();
+                        double g = scanner.nextDouble();
+                        double b = scanner.nextDouble();
+                        break;
+                    case "light"
                 }
-                driver.setModelNumber(modelsBefore);
-                modelArray.add(model);
-                driverArray.add(driver);
-                scanner.close();
 
 
             }
-            scannerLine.close();
+            scanner.close();
             //System.out.println(driverArray.size());
             //System.out.println(modelArray.size());
         } catch (IOException e) {
             System.exit(1);
-        }
-        File folder = new File (args[0].substring(0,args[0].length()-4));
-        for (int i = 0; i < modelArray.size(); i++) {
-            modelArray.get(i).outputFile(driverArray.get(i),folder);
         }
     }
 }
