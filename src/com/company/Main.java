@@ -10,6 +10,10 @@ import java.util.Scanner;
 public class Main {
 
     public static void main(String[] args) {
+        ArrayList<Light> lights = new ArrayList();
+        ArrayList<Sphere> spheres = new ArrayList();
+        double [] ambience = new double[3];
+        Camera camera;
 
         File file = new File(args[0]);
         try {
@@ -22,12 +26,10 @@ public class Main {
                         double ey = scanner.nextDouble();
                         double ez = scanner.nextDouble();
                         String look = scanner.next();
-                        System.out.println(look);
                         double lx =scanner.nextDouble();
                         double ly =scanner.nextDouble();
                         double lz =scanner.nextDouble() ;
                         String up = scanner.next();
-                        System.out.println(up);
                         double ux =scanner.nextDouble();
                         double uy = scanner.nextDouble();
                         double uz = scanner.nextDouble();
@@ -41,20 +43,53 @@ public class Main {
                         String res = scanner.next();
                         int width = scanner.nextInt();
                         int height = scanner.nextInt();
+                        camera = new Camera(ex,ey,ez,lx,ly,lz,ux,uy,ux,dValue,bLeft,bRight,bBottum,bTop,width,height);
+                        System.out.println(camera.toString());
                         break;
                     case "ambient":
-                        double r = scanner.nextDouble();
-                        double g = scanner.nextDouble();
-                        double b = scanner.nextDouble();
+                        ambience[0] = scanner.nextDouble();
+                        ambience[1]  = scanner.nextDouble();
+                        ambience[2] = scanner.nextDouble();
+
                         break;
-                    case "light"
+                    case "light":
+                        double lightx   =scanner.nextDouble();
+                        double lighty = scanner.nextDouble();
+                        double lightz = scanner.nextDouble();
+                        double w =  scanner.nextDouble();
+                        double red  = scanner.nextDouble();
+                        double green = scanner.nextDouble();
+                        double blue = scanner.nextDouble();
+                        Light light = new Light(lightx,lighty,lightz,w, red, green, blue);
+                        System.out.println(light.toString());
+                        lights.add(light);
+                        break;
+                    case "sphere":
+                        double sx = scanner.nextDouble();
+                        double sy = scanner.nextDouble();
+                        double sz = scanner.nextDouble();
+                        double radius = scanner.nextDouble();
+                        double ambientRed= scanner.nextDouble();
+                        double ambientGreen = scanner.nextDouble();
+                        double ambientBlue= scanner.nextDouble();
+                        double  diffuseRed = scanner.nextDouble();
+                        double  diffuseGreen= scanner.nextDouble();
+                        double  diffuseBlue= scanner.nextDouble();
+                        double  specRed= scanner.nextDouble();
+                        double  specGreen= scanner.nextDouble();
+                        double  specBlue= scanner.nextDouble();
+                        double  attenRed = scanner.nextDouble();
+                        double  attenGreen= scanner.nextDouble();
+                        double attenBlue = scanner.nextDouble();
+                        Sphere sphere = new Sphere(sx,sy,sz,radius,ambientRed,ambientBlue,ambientGreen,diffuseRed,diffuseGreen,diffuseBlue,
+                                specRed,specGreen,specBlue,attenRed,attenGreen,attenBlue);
+                        System.out.println(sphere.toString());
+                        spheres.add(sphere);
                 }
 
 
             }
             scanner.close();
-            //System.out.println(driverArray.size());
-            //System.out.println(modelArray.size());
         } catch (IOException e) {
             System.exit(1);
         }
