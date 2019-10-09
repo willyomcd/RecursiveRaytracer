@@ -31,6 +31,70 @@ public class Camera{
         this.height = height;
     }
 
+    public int getWidth() {
+        return width;
+    }
+
+    public double getEx() {
+        return ex;
+    }
+
+    public double getEy() {
+        return ey;
+    }
+
+    public double getEz() {
+        return ez;
+    }
+
+    public double getLx() {
+        return lx;
+    }
+
+    public double getLy() {
+        return ly;
+    }
+
+    public double getLz() {
+        return lz;
+    }
+
+    public double getUx() {
+        return ux;
+    }
+
+    public double getUy() {
+        return uy;
+    }
+
+    public double getUz() {
+        return uz;
+    }
+
+    public double getNear() {
+        return near;
+    }
+
+    public double getLeft() {
+        return left;
+    }
+
+    public double getRight() {
+        return right;
+    }
+
+    public double getBottom() {
+        return bottom;
+    }
+
+    public double getTop() {
+        return top;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
     @Override
     public String toString() {
         //intellij generated toString
@@ -53,5 +117,6 @@ public class Camera{
                 ", height=" + height +
                 '}';
     }
+
 
 }

@@ -1,5 +1,7 @@
 package com.company;
 
+import java.util.ArrayList;
+
 public class Sphere {
     private double sx, sy, sz;
     private double radius;
@@ -33,6 +35,69 @@ public class Sphere {
         this.attenBlue = atblue;
     }
 
+    public double getSx() {
+        return sx;
+    }
+
+    public double getSy() {
+        return sy;
+    }
+
+    public double getSz() {
+        return sz;
+    }
+
+    public double getRadius() {
+        return radius;
+    }
+
+    public double getAmbientRed() {
+        return ambientRed;
+    }
+
+    public double getAmbientGreen() {
+        return ambientGreen;
+    }
+
+    public double getAmbientBlue() {
+        return ambientBlue;
+    }
+
+    public double getDiffuseRed() {
+        return diffuseRed;
+    }
+
+    public double getDiffuseGreen() {
+        return diffuseGreen;
+    }
+
+    public double getDiffuseBlue() {
+        return diffuseBlue;
+    }
+
+    public double getSpecRed() {
+        return specRed;
+    }
+
+    public double getSpecGreen() {
+        return specGreen;
+    }
+
+    public double getSpecBlue() {
+        return specBlue;
+    }
+
+    public double getAttenRed() {
+        return attenRed;
+    }
+
+    public double getAttenGreen() {
+        return attenGreen;
+    }
+
+    public double getAttenBlue() {
+        return attenBlue;
+    }
 
     @Override
     public String toString() {
@@ -56,4 +121,5 @@ public class Sphere {
                 ", attenBlue=" + attenBlue +
                 '}';
     }
+
 }
