@@ -97,12 +97,14 @@ public class Main {
         }
     }
     public static void render(Camera camera, ArrayList<Light> lights,ArrayList<Sphere> spheres, double[] ambience){
+        int [][][] image = new int[camera.getWidth()][camera.getHeight()][3];
         for(int sphere = 0; sphere <spheres.size(); sphere++){
             for(int i = 0; i <camera.getWidth(); i++) {
                 for(int j = 0; j< camera.getHeight(); j++) {
                     Vector3D [] ray = new Vector3D[2];
                     ray = makeRay(i,j,camera);
-                    int color = colorRay(ray, spheres.get(sphere));
+                    int [] color = colorRay(ray, spheres.get(sphere));
+
                 }
             }
         }
@@ -142,7 +144,7 @@ public class Main {
         return ray;
 
     }
-    public static int colorRay(Vector3D[] ray, Sphere sphere){
+    public static int [] colorRay(Vector3D[] ray, Sphere sphere){
         boolean intersects = false;
         double radius = sphere.getRadius();
         double [] centerA = new double[] {sphere.getSx(),sphere.getSy(), sphere.getSz()};
@@ -151,14 +153,20 @@ public class Main {
         Vector3D vector = ray[1];
         Vector3D baseToCenter = center.subtract(point);
         double projOnRay= baseToCenter.dotProduct(vector);
-        double disc = baseToCenter.dotProduct(baseToCenter) - (projOnRay*projOnRay);
-        disc = Math.sqrt(disc);
-        if(disc <= radius){
+        System.out.println("proj on ray: " + projOnRay);
+        double disc = (radius*radius) - (baseToCenter.dotProduct(baseToCenter) - (projOnRay*projOnRay));
+        System.out.println("disc : " + disc);
+
+        //System.out.println("disc: " + disc);
+        if(disc >= 0){
             intersects = true;
+            disc = Math.sqrt(disc);
+            Vector3D intersection = point.add(vector.scalarMultiply(projOnRay - disc));
+            //System.out.println( " intersection: "  + intersection.toString());
         }
 
 
 
-        return 0;
+        return new int[]{3};
     }
 }
