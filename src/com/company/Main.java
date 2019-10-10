@@ -51,7 +51,7 @@ public class Main {
                         int width = scanner.nextInt();
                         int height = scanner.nextInt();
                         camera = new Camera(ex,ey,ez,lx,ly,lz,ux,uy,uz,dValue,bLeft,bRight,bBottum,bTop,width,height);
-                        System.out.println(camera.toString());
+                        //System.out.println(camera.toString());
                         break;
                     case "ambient":
                         ambience[0] = scanner.nextDouble();
@@ -68,7 +68,7 @@ public class Main {
                         double green = scanner.nextDouble();
                         double blue = scanner.nextDouble();
                         Light light = new Light(lightx,lighty,lightz,w, red, green, blue);
-                        System.out.println(light.toString());
+                        //System.out.println(light.toString());
                         lights.add(light);
                         break;
                     case "sphere":
@@ -90,7 +90,7 @@ public class Main {
                         double attenBlue = scanner.nextDouble();
                         Sphere sphere = new Sphere(sx,sy,sz,radius,ambientRed,ambientBlue,ambientGreen,diffuseRed,diffuseGreen,diffuseBlue,
                                 specRed,specGreen,specBlue,attenRed,attenGreen,attenBlue);
-                        System.out.println(sphere.toString());
+                       // System.out.println(sphere.toString());
                         spheres.add(sphere);
                 }
 
@@ -277,7 +277,6 @@ public class Main {
         }else{
             for(int i = 0; i < intersections.size(); i++) {
                 if(intersections.get(i).distance(ray[0]) <= intersections.get(shortest).distance(ray[0])){
-                    System.out.println("in here" + 1);
                     shortest = i;
                 }
             }
