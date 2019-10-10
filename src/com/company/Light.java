@@ -25,6 +25,34 @@ public class Light {
         this.blue = blue;
     }
 
+    public double getLx() {
+        return lx;
+    }
+
+    public double getLy() {
+        return ly;
+    }
+
+    public double getLz() {
+        return lz;
+    }
+
+    public double getW() {
+        return w;
+    }
+
+    public double getRed() {
+        return red;
+    }
+
+    public double getGreen() {
+        return green;
+    }
+
+    public double getBlue() {
+        return blue;
+    }
+
     @Override
     public String toString() {
         //intellij generated toString
