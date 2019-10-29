@@ -1,5 +1,6 @@
 package com.company;
 
+import javafx.scene.paint.Material;
 import org.apache.commons.math3.geometry.euclidean.threed.Rotation;
 import org.apache.commons.math3.geometry.euclidean.threed.RotationConvention;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
@@ -27,6 +28,7 @@ public class Model {
     private RealMatrix finalMatrix;
     private RealMatrix transformationMatrix;
     private RealMatrix inverseTransformationMatrix;
+    private ArrayList<Material> mats = new ArrayList<>();
 
     public Model (Driver driver){
 
@@ -52,6 +54,9 @@ public class Model {
             lineHeader1 = scanner.nextLine();
             while(scanner.hasNext()){
                 String lineToken = scanner.next();
+                if(lineToken.equals("mtllib")){
+                    readMaterial(scanner.next());
+                }
                 if(lineToken.equals("v")){
                     double[] vertex = new double[4];
                     double x = scanner.nextDouble();
@@ -313,6 +318,24 @@ public class Model {
         }catch(IOException e){
 
         }
+
+    }
+    private void readMaterial(String file) {
+            Scanner scanner = new Scanner(file);
+            //fluff
+            scanner.nextLine();
+            scanner.nextLine();
+            while (scanner.hasNext()) {
+                String word = scanner.next();
+                switch(word){
+                    case "newmtl" :
+                        String name = scanner.next();
+
+                }
+
+
+            }
+
 
     }
 

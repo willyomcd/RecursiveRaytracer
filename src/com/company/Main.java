@@ -20,6 +20,9 @@ public class Main {
     public static void main(String[] args) {
         ArrayList<Light> lights = new ArrayList();
         ArrayList<Sphere> spheres = new ArrayList();
+        ArrayList<Driver> driverArray = new ArrayList<>();
+        ArrayList<Model> modelArray = new ArrayList<>();
+        int recursionLevel;
         double [] ambience = new double[3];
         Camera camera = new Camera();
         File file = new File(args[0]);
@@ -28,6 +31,10 @@ public class Main {
             while (scanner.hasNext()) {
                 String word = scanner.next();
                 switch (word) {
+                    case "recursionlevel" :
+                        recursionLevel = scanner.nextInt();
+                        System.out.println(recursionLevel);
+                        break;
                     case "eye":
                         double ex = scanner.nextDouble();
                         double ey = scanner.nextDouble();
@@ -71,6 +78,40 @@ public class Main {
                         //System.out.println(light.toString());
                         lights.add(light);
                         break;
+                    case "model":
+                        Driver driver = new Driver();
+                        double wx = Double.parseDouble(scanner.next());
+                        double wy = Double.parseDouble(scanner.next());
+                        double wz = Double.parseDouble(scanner.next());
+                        driver.setAxisAngle(wx, wy, wz);
+                        double angle = Double.parseDouble(scanner.next());
+                        driver.setAngle(angle);
+                        double scale = Double.parseDouble(scanner.next());
+                        driver.setScale(scale);
+                        double tx = Double.parseDouble(scanner.next());
+                        double ty = Double.parseDouble(scanner.next());
+                        double tz = Double.parseDouble(scanner.next());
+                        driver.translate(tx, ty, tz);
+                        String modelName = scanner.next();
+                        Path modelPath = Paths.get(args[0]);
+                        //System.out.println(modelPath);
+                        driver.setModel(modelName);
+
+                        //System.out.println(driver.toString());
+                        Model model = new Model(driver);
+                        //assigns model number
+                        int modelsBefore = 0;
+                        for(int i = 0; i<driverArray.size(); i++) {
+                            if(driver.getModelName().equals(driverArray.get(i).getModelName())){
+                                modelsBefore++;
+                            }
+                        }
+                        driver.setModelNumber(modelsBefore);
+                        modelArray.add(model);
+                        driverArray.add(driver);
+                        scanner.close();
+                        break;
+
                     case "sphere":
                         double sx = scanner.nextDouble();
                         double sy = scanner.nextDouble();
@@ -90,13 +131,17 @@ public class Main {
                         double attenBlue = scanner.nextDouble();
                         Sphere sphere = new Sphere(sx,sy,sz,radius,ambientRed,ambientBlue,ambientGreen,diffuseRed,diffuseGreen,diffuseBlue,
                                 specRed,specGreen,specBlue,attenRed,attenGreen,attenBlue);
-                       // System.out.println(sphere.toString());
+
                         spheres.add(sphere);
                 }
 
 
             }
             scanner.close();
+            System.out.println(modelArray.toString());
+            System.out.println(driverArray.toString());
+            System.out.println(spheres.toString());
+
            int [][][]image = render(camera,lights,spheres, ambience);
             outputFile(image,args[0]);
         } catch (IOException e) {
