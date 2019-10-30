@@ -8,6 +8,7 @@ import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 
 
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -28,7 +29,7 @@ public class Model {
     private RealMatrix finalMatrix;
     private RealMatrix transformationMatrix;
     private RealMatrix inverseTransformationMatrix;
-    private ArrayList<Material> mats = new ArrayList<>();
+    private ArrayList<Materials> mats = new ArrayList<>();
 
     public Model (Driver driver){
 
@@ -121,9 +122,6 @@ public class Model {
 
 
         return  matrix;
-    }
-    public String toString(){
-        return Arrays.toString(faces.toArray());
     }
     private RealMatrix scale (Driver d, RealMatrix matrix){
         double scale = d.getScale();
@@ -320,25 +318,68 @@ public class Model {
         }
 
     }
-    private void readMaterial(String file) {
+    private void readMaterial(String filename) {
+        File file = new File(filename);
+        try {
             Scanner scanner = new Scanner(file);
             //fluff
             scanner.nextLine();
             scanner.nextLine();
             while (scanner.hasNext()) {
                 String word = scanner.next();
-                switch(word){
-                    case "newmtl" :
-                        String name = scanner.next();
-
+                switch (word) {
+                    case "newmtl":
+                        Materials mat = new Materials();
+                        mat.setName(scanner.next());
+                        scanner.next();
+                        mat.setNs(scanner.nextDouble());
+                        scanner.next();
+                        mat.setAmbientRed(scanner.nextDouble());
+                        mat.setAmbientGreen(scanner.nextDouble());
+                        mat.setAmbientBlue(scanner.nextDouble());
+                        scanner.next();
+                        mat.setDiffuseRed(scanner.nextDouble());
+                        mat.setDiffuseGreen(scanner.nextDouble());
+                        mat.setDiffuseBlue(scanner.nextDouble());
+                        scanner.next();
+                        mat.setSpecRed(scanner.nextDouble());
+                        mat.setSpecGreen(scanner.nextDouble());
+                        mat.setSpecBlue(scanner.nextDouble());
+                        scanner.next();
+                        mat.setAttenRed(scanner.nextDouble());
+                        mat.setAttenGreen(scanner.nextDouble());
+                        mat.setAttenBlue(scanner.nextDouble());
+                        scanner.next();
+                        mat.setNi(scanner.nextDouble());
+                        scanner.next();
+                        mat.setD(scanner.nextDouble());
+                        scanner.next();
+                        mat.setIllum(scanner.nextInt());
+                        mats.add(mat);
                 }
-
-
             }
+            scanner.close();
+            System.out.println(mats.toString());
+        }catch(IOException e){
+            System.exit(6);
+        }
 
 
     }
 
-
-
+    @Override
+    public String toString() {
+        return "Model{" +
+                "verticeList=" + verticeList +
+                ", faces=" + faces +
+                ", lineHeader0='" + lineHeader0 + '\'' +
+                ", lineHeader1='" + lineHeader1 + '\'' +
+                ", sLine='" + sLine + '\'' +
+                ", startMatrix=" + startMatrix +
+                ", finalMatrix=" + finalMatrix +
+                ", transformationMatrix=" + transformationMatrix +
+                ", inverseTransformationMatrix=" + inverseTransformationMatrix +
+                ", mats=" + mats +
+                '}';
+    }
 }

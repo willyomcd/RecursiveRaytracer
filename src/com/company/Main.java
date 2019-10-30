@@ -33,7 +33,6 @@ public class Main {
                 switch (word) {
                     case "recursionlevel" :
                         recursionLevel = scanner.nextInt();
-                        System.out.println(recursionLevel);
                         break;
                     case "eye":
                         double ex = scanner.nextDouble();
@@ -109,7 +108,6 @@ public class Main {
                         driver.setModelNumber(modelsBefore);
                         modelArray.add(model);
                         driverArray.add(driver);
-                        scanner.close();
                         break;
 
                     case "sphere":
@@ -133,12 +131,13 @@ public class Main {
                                 specRed,specGreen,specBlue,attenRed,attenGreen,attenBlue);
 
                         spheres.add(sphere);
+                        break;
                 }
 
 
             }
             scanner.close();
-            System.out.println(modelArray.toString());
+
             System.out.println(driverArray.toString());
             System.out.println(spheres.toString());
 
@@ -155,7 +154,7 @@ public class Main {
                 for(int j = 0; j< camera.getHeight(); j++) {
                     Vector3D [] ray = new Vector3D[2];
                     ray = makeRay(i,j,camera);
-                    int closeSphere = -1;
+                    int closeSphere = 0;
                     closeSphere = findCloseSphere(ray,spheres,camera);
                     double [] color = colorRay(ray, spheres.get(closeSphere),ambience, lights);
                     int[] pixelValues = roundToInt(color);
@@ -207,7 +206,7 @@ public class Main {
 
     }
     public static double [] colorRay(Vector3D[] ray, Sphere sphere,double[] ambience, ArrayList<Light> lights){
-        boolean intersects = false;
+
 
         double radius = sphere.getRadius();
         double [] centerA = new double[] {sphere.getSx(),sphere.getSy(), sphere.getSz()};
@@ -222,16 +221,14 @@ public class Main {
 
         //System.out.println("disc: " + disc);
         if(disc >= 0){
-            intersects = true;
             disc = Math.sqrt(disc);
             Vector3D intersection = point.add(vector.scalarMultiply(projOnRay - disc));
             //System.out.println( " intersection: "  + intersection.toString());
             Vector3D surfaceNormal = intersection.subtract(center);
             surfaceNormal = surfaceNormal.normalize();
-
-
             double[] sphereAmA = new double[] {sphere.getAmbientRed(),sphere.getAmbientGreen(),sphere.getAmbientBlue()};
             double[] sphereDifA = new double[]{sphere.getDiffuseRed(),sphere.getDiffuseGreen(),sphere.getDiffuseBlue()};
+            double[] sphereSpecA = new double[]{sphere.getSpecRed(),sphere.getSpecGreen(),sphere.getSpecBlue()};
             double [] colorA =  ebeMultiply(sphereAmA,ambience);
             Vector3D color = new Vector3D(colorA);
 
@@ -241,10 +238,24 @@ public class Main {
                 Vector3D source = new Vector3D(sourceA);
                 Vector3D lightRay = source.subtract(intersection);
                 lightRay = lightRay.normalize();
-                if(surfaceNormal.dotProduct(lightRay)>0){
-                    double[] sphereLight = ebeMultiply(sphereDifA,emit);
-                    Vector3D lightStrength = new Vector3D(sphereLight).scalarMultiply(surfaceNormal.dotProduct(lightRay));
+                double lightAngle = surfaceNormal.dotProduct(lightRay);
+                if(lightAngle > 0){
+                    double[] sphereDifLight = ebeMultiply(sphereDifA,emit);
+                    Vector3D lightStrength = new Vector3D(sphereDifLight).scalarMultiply(lightAngle);
                     color = color.add(lightStrength);
+                    //calc specular
+                    Vector3D baseToIntersection = point.subtract(intersection);
+                    baseToIntersection = baseToIntersection.normalize();
+                    System.out.println( " baseto intersection: "  + baseToIntersection.toString());
+                    Vector3D reflection = surfaceNormal.scalarMultiply(lightAngle*2).subtract(lightRay);
+                    reflection = reflection.normalize();
+                    System.out.println( "reflection: "  + reflection.toString());
+                    double specStrength = baseToIntersection.dotProduct(reflection);
+                    if(specStrength > 0){
+                        double [] sphereSpecLightA = ebeMultiply(sphereSpecA,emit);
+                        Vector3D sphereSpecLight = new Vector3D(sphereSpecLightA);
+                        color = color.add(sphereSpecLight.scalarMultiply(Math.pow(specStrength,16)));
+                    }
                     //System.out.println("color" + color.toString());
 
                 }
@@ -287,11 +298,9 @@ public class Main {
         }
     }
     public static int findCloseSphere(Vector3D [] ray, ArrayList<Sphere> spheres, Camera camera){
-        ArrayList<Vector3D> intersections = new ArrayList<Vector3D>();
-        ArrayList<Integer> intersectionSpheres = new ArrayList<Integer>();
-        for(int i = 0; i <spheres.size();i++){
-            boolean intersects = false;
+        Vector3D [] intersections = new Vector3D[spheres.size()];
 
+        for(int i = 0; i <spheres.size();i++){
             double radius = spheres.get(i).getRadius();
             double [] centerA = new double[] {spheres.get(i).getSx(),spheres.get(i).getSy(), spheres.get(i).getSz()};
             Vector3D center = new Vector3D(centerA);
@@ -305,29 +314,27 @@ public class Main {
 
             //System.out.println("disc: " + disc);
             if(disc >= 0) {
-                intersects = true;
                 disc = Math.sqrt(disc);
                 Vector3D intersection = point.add(vector.scalarMultiply(projOnRay - disc));
-                intersections.add(intersection);
-                intersectionSpheres.add(i);
+                intersections[i] = intersection;
             }
         }
-        //System.out.println(intersections.toString());
-        int shortest = 0;
-        if(intersections.size() == 0){
-            return 0;
-        }
-        else if(intersections.size()==1){
-            return intersectionSpheres.get(0);
-        }else{
-            for(int i = 0; i < intersections.size(); i++) {
-                if(intersections.get(i).distance(ray[0]) <= intersections.get(shortest).distance(ray[0])){
+        int shortest = -1;
+        //System.out.println(Arrays.toString(intersections ));
+        for(int i = 0 ; i < intersections.length;i++){
+            if(intersections[i] != null) {
+                if (shortest == -1) {
+                    shortest = i;
+                } else if (intersections[i].distance(ray[0]) <= intersections[shortest].distance(ray[0])) {
                     shortest = i;
                 }
             }
+
         }
 
-
+        if(shortest == -1){
+            return 0;
+        }
         return shortest;
     }
 
