@@ -154,9 +154,7 @@ public class Main {
                 for(int j = 0; j< camera.getHeight(); j++) {
                     Vector3D [] ray = new Vector3D[2];
                     ray = makeRay(i,j,camera);
-                    int closeSphere = 0;
-                    closeSphere = findCloseSphere(ray,spheres,camera);
-                    double [] color = colorRay(ray, spheres.get(closeSphere),ambience, lights);
+                    double [] color = colorRay(ray, spheres,ambience, lights);
                     int[] pixelValues = roundToInt(color);
                     image [j][i][0] = pixelValues[0];
                     image [j][i][1] = pixelValues[1];
@@ -205,9 +203,13 @@ public class Main {
         return ray;
 
     }
-    public static double [] colorRay(Vector3D[] ray, Sphere sphere,double[] ambience, ArrayList<Light> lights){
+    public static double [] colorRay(Vector3D[] ray, ArrayList<Sphere> spheres,double[] ambience, ArrayList<Light> lights){
 
 
+        int sphereClosest = findCloseSphere(ray,spheres,1 );
+        //System.out.println(sphereClosest);
+        if (sphereClosest == -1) {sphereClosest = 0;}
+        Sphere sphere = spheres.get(sphereClosest);
         double radius = sphere.getRadius();
         double [] centerA = new double[] {sphere.getSx(),sphere.getSy(), sphere.getSz()};
         Vector3D center = new Vector3D(centerA);
@@ -239,6 +241,12 @@ public class Main {
                 Vector3D lightRay = source.subtract(intersection);
                 lightRay = lightRay.normalize();
                 double lightAngle = surfaceNormal.dotProduct(lightRay);
+                //Vector3D reverseLightRay = intersection.subtract(source);
+                //reverseLightRay = reverseLightRay.normalize();
+                Vector3D[] lightRayLD = new Vector3D[]{intersection,lightRay};
+                if(inShadow(lightRayLD,spheres)){
+                    //continue;
+                }
                 if(lightAngle > 0){
                     double[] sphereDifLight = ebeMultiply(sphereDifA,emit);
                     Vector3D lightStrength = new Vector3D(sphereDifLight).scalarMultiply(lightAngle);
@@ -246,10 +254,10 @@ public class Main {
                     //calc specular
                     Vector3D baseToIntersection = point.subtract(intersection);
                     baseToIntersection = baseToIntersection.normalize();
-                    System.out.println( " baseto intersection: "  + baseToIntersection.toString());
+                    //System.out.println( " baseto intersection: "  + baseToIntersection.toString());
                     Vector3D reflection = surfaceNormal.scalarMultiply(lightAngle*2).subtract(lightRay);
                     reflection = reflection.normalize();
-                    System.out.println( "reflection: "  + reflection.toString());
+                    //System.out.println( "reflection: "  + reflection.toString());
                     double specStrength = baseToIntersection.dotProduct(reflection);
                     if(specStrength > 0){
                         double [] sphereSpecLightA = ebeMultiply(sphereSpecA,emit);
@@ -297,7 +305,7 @@ public class Main {
             System.exit(3);
         }
     }
-    public static int findCloseSphere(Vector3D [] ray, ArrayList<Sphere> spheres, Camera camera){
+    public static int findCloseSphere(Vector3D [] ray, ArrayList<Sphere> spheres, int call){
         Vector3D [] intersections = new Vector3D[spheres.size()];
 
         for(int i = 0; i <spheres.size();i++){
@@ -320,7 +328,7 @@ public class Main {
             }
         }
         int shortest = -1;
-        //System.out.println(Arrays.toString(intersections ));
+
         for(int i = 0 ; i < intersections.length;i++){
             if(intersections[i] != null) {
                 if (shortest == -1) {
@@ -331,11 +339,20 @@ public class Main {
             }
 
         }
-
-        if(shortest == -1){
-            return 0;
-        }
+        System.out.println("intersections" + Arrays.toString(intersections) + "\nshortest: " + shortest + "\ncall:" +
+                "" + call + "\n");
         return shortest;
+    }
+    public static boolean inShadow(Vector3D []lightRay, ArrayList<Sphere> spheres){
+        //System.out.println(lightRay[1].toString());
+        int intersection = findCloseSphere(lightRay,spheres, 2);
+        //System.out.println(intersection);
+        if(intersection != -1){
+            return true;
+        }
+        else{
+           return false;
+        }
     }
 
 }
